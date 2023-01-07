@@ -165,57 +165,21 @@ namespace ByteBank.Entities
             Console.Write("Digite o CPF do usuário que vai receber a transferência: ");
             string cpfReceive = Console.ReadLine();
 
-            bool foundCpfTransfer = false;
-            bool foundCpfReceive = false;
-
             for (int i = 0; i < User.cpf.Count(); i++)
             {
-                if (User.cpf[i] != cpfTransfer && User.cpf[i] != cpfReceive)
+                if (User.cpf[i] == cpfTransfer)
                 {
-                    continue;
-                } else if (User.cpf[i] == cpfTransfer)
-                {
-                    foundCpfTransfer = true;
-
-                    balanceTransfer = User.balance[i];
+                    User.balance[i] -= valueToTransfer;
                 } else if (User.cpf[i] == cpfReceive)
                 {
-                    foundCpfReceive = true;
-
-                    balanceReceive = User.balance[i];
+                    User.balance[i] += valueToTransfer;
                 }
             }
 
-            if (foundCpfTransfer == false || foundCpfReceive == false)
-            {
-                VirtualAssistant.EvaWrite(ConsoleColor.Red, "Impossível realizar operação, algum dos CPF's não foram encontrados.");
-            }
+            Animate.LoadBar();
+            VirtualAssistant.EvaWrite(ConsoleColor.Green, $"Transferência de R$ {valueToTransfer:F2} realizada com sucesso!\n");
 
-            if (valueToTransfer > 0 && valueToTransfer <= balanceTransfer)
-            {
-                balanceTransfer -= valueToTransfer;
-                balanceReceive += valueToTransfer;
-
-                Animate.LoadBar();
-                VirtualAssistant.EvaWrite(ConsoleColor.Green, $"Transferência de R$ {valueToTransfer:F2} realizada com sucesso!\n");
-
-                Thread.Sleep(1000);
-            } else if (valueToTransfer <= 0)
-            {
-                VirtualAssistant.EvaWrite(ConsoleColor.Red, "Não é possível transferir um valor menor ou igual a R$ 0,00\n");
-
-                Thread.Sleep(1000);
-            } else if (valueToTransfer > balanceTransfer)
-            {
-                VirtualAssistant.EvaWrite(ConsoleColor.Red, "Não é possível tranferir um valor maior do que o seu saldo!\n");
-
-                Thread.Sleep(1000);
-            } else
-            {
-                VirtualAssistant.EvaWrite(ConsoleColor.Red, "Impossível realizar operação.\n");
-
-                Thread.Sleep(1000);
-            }
+            Thread.Sleep(1000);
 
             SystemServices.ShowSubMenu();
         }
